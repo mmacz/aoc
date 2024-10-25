@@ -1,6 +1,13 @@
 mod input;
+use std::str::FromStr;
 use crate::solver::Solver;
 use crate::intcode::*;
+
+fn sanity_check(program: &str, idx: usize) -> i32 {
+    let mut cpu = Cpu::new(program);
+    cpu.run();
+    0
+}
 
 fn solution(program: &str, program_input: i64) -> i64 {
     let mut cpu = Cpu::new(program);
@@ -24,25 +31,14 @@ impl Solver for Problem {
 
 #[cfg(test)]
 mod tests {
-    use crate::solutions::day09::*;
-
-    const SANITY_INPUTS: [&str; 3] = [
-        "109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99",
-        "1102,34915192,34915192,7,4,7,99,0",
-        "104,1125899906842624,99"
-    ];
-
-    fn sanity_check(program: &str) -> i32 {
-        let mut cpu = Cpu::new(program);
-        cpu.run();
-        0
-    }
+    use crate::solutions::day9::*;
 
     #[test]
     fn test_verify_day9_sanity() {
-        let results: Vec<i32> = SANITY_INPUTS
+        let results: Vec<i32> = input::SANITY_INPUTS
             .iter()
-            .map(|input| sanity_check(&input))
+            .enumerate()
+            .map(|(idx, input)| sanity_check(&input, idx))
             .collect();
         assert!(results.iter().all(|&res| res == 0));
     }

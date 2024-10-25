@@ -1,27 +1,25 @@
 use crate::solver::Solver;
-mod day01;
-mod day02;
-mod day03;
-mod day04;
-mod day05;
-mod day06;
-mod day07;
-mod day08;
-mod day09;
+mod day1;
+mod day2;
+mod day3;
+mod day4;
+mod day5;
+mod day6;
+mod day7;
+mod day8;
+mod day9;
 mod day10;
-mod day11;
 
 pub fn run_solutions() {
-    day01::Problem {}.solve(1);
-    day02::Problem {}.solve(2);
-    day03::Problem {}.solve(3);
-    day04::Problem {}.solve(4);
-    day05::Problem {}.solve(5);
-    day06::Problem {}.solve(6);
-    day07::Problem {}.solve(7);
-    day08::Problem {}.solve(8);
-    day09::Problem {}.solve(9);
+    day1::Problem {}.solve(1);
+    day2::Problem {}.solve(2);
+    day3::Problem {}.solve(3);
+    day4::Problem {}.solve(4);
+    day5::Problem {}.solve(5);
+    day6::Problem {}.solve(6);
+    day7::Problem {}.solve(7);
+    day8::Problem {}.solve(8);
+    day9::Problem {}.solve(9);
     day10::Problem {}.solve(10);
-    day11::Problem {}.solve(11);
 }
 

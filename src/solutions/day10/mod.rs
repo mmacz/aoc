@@ -97,10 +97,11 @@ fn which_destroyed_at(input: &str, best_place: (i32, i32), destroy_at: i32) -> (
     let mut last_destroyed = (0, 0);
 
     while destroy_count < destroy_at {
-        for (_, ast) in by_angle.iter_mut() {
+        for (angle, ast) in by_angle.iter_mut() {
             if !ast.is_empty() {
                 destroy_count += 1;
                 last_destroyed = ast.remove(0).1;
+                let degree: f64 = (*angle as f64) / 100_000.0;
                 if destroy_count == destroy_at {
                     return last_destroyed;
                 }
@@ -164,64 +165,23 @@ mod tests {
 
     #[test]
     fn test_solution1_sanity_input1() {
-        assert_eq!(8, asteroid_with_most_visible(SANITY_INPUT1).1);
+        assert_eq!(8, asteroid_with_most_visible(input::SANITY_INPUT1).1);
     }
 
     #[test]
     fn test_solution1_sanity_input2() {
-        assert_eq!(33, asteroid_with_most_visible(SANITY_INPUT2).1);
+        assert_eq!(33, asteroid_with_most_visible(input::SANITY_INPUT2).1);
     }
 
     #[test]
     fn test_asteroid_with_most_visible_sanity_input3() {
-        assert_eq!(210, asteroid_with_most_visible(SANITY_INPUT3).1);
+        assert_eq!(210, asteroid_with_most_visible(input::SANITY_INPUT3).1);
     }
 
     #[test]
     fn test_vaporized_asteroid_at_200_iteration() {
-        let best = asteroid_with_most_visible(SANITY_INPUT3).0;
-        assert_eq!((8, 2), which_destroyed_at(SANITY_INPUT3, best, 200));
+        let best = asteroid_with_most_visible(input::SANITY_INPUT3).0;
+        assert_eq!((8, 2), which_destroyed_at(input::SANITY_INPUT3, best, 200));
     }
-    
-    const SANITY_INPUT1: &str = "
-.#..#
-.....
-#####
-....#
-...##";
-
-    const SANITY_INPUT2: &str = "
-......#.#.
-#..#.#....
-..#######.
-.#.#.###..
-.#..#.....
-..#....#.#
-#..#....#.
-.##.#..###
-##...#..#.
-.#....####";
-
-    const SANITY_INPUT3: &str = "
-.#..##.###...#######
-##.############..##.
-.#.######.########.#
-.###.#######.####.#.
-#####.##.#.##.###.##
-..#####..#.#########
-####################
-#.####....###.#.#.##
-##.#################
-#####.##.###..####..
-..######..##.#######
-####.##.####...##..#
-.#####..#.######.###
-##...#.##########...
-#.##########.#######
-.####.#.###.###.#.##
-....##.##.###..#####
-.#.#.###########.###
-#.#.#.#####.####.###
-###.##.####.##.#..##";
 }
 
