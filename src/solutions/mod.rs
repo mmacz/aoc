@@ -10,6 +10,7 @@ mod day08;
 mod day09;
 mod day10;
 mod day11;
+mod day12;
 
 pub fn run_solutions() {
     day01::Problem {}.solve(1);
@@ -23,4 +24,5 @@ pub fn run_solutions() {
     day09::Problem {}.solve(9);
     day10::Problem {}.solve(10);
     day11::Problem {}.solve(11);
+    day12::Problem {}.solve(12);
 }
