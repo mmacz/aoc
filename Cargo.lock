@@ -3,47 +3,11 @@
 version = 3
 
 [[package]]
-name = "day1"
-version = "1.0.0"
-
-[[package]]
-name = "day10"
-version = "1.0.0"
-
-[[package]]
-name = "day2"
-version = "1.0.0"
-
-[[package]]
-name = "day3"
-version = "1.0.0"
-
-[[package]]
-name = "day4"
-version = "1.0.0"
-
-[[package]]
-name = "day5"
-version = "1.0.0"
-
-[[package]]
-name = "day6"
-version = "1.0.0"
-
-[[package]]
-name = "day7"
+name = "aoc2019"
 version = "1.0.0"
 dependencies = [
  "itertools",
 ]
-
-[[package]]
-name = "day8"
-version = "1.0.0"
-
-[[package]]
-name = "day9"
-version = "1.0.0"
 
 [[package]]
 name = "either"

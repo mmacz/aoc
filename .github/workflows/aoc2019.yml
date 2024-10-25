@@ -16,4 +16,8 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build
       run: cargo build -r
+    - name: Run tests
+      run: cargo test
+    - name: Run apps
+      run: cargo run
 
