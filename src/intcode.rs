@@ -88,6 +88,16 @@ impl Cpu {
         self.inputs.push_back(input);
     }
 
+  pub fn run_until_output(&mut self) -> Option<i64> {
+        loop {
+            match self.step() {
+                CpuStatus::Output(val) => return Some(val),
+                CpuStatus::Finished => return None,
+                CpuStatus::WaitForInput => panic!("Expected input!"),
+                CpuStatus::Running => continue,
+            }
+        }
+    }
     pub fn run(&mut self) -> i64 {
         let mut last_out: i64 = 0;
         loop {
@@ -118,7 +128,6 @@ impl Cpu {
             Opcode::EQ => self.eq(&param_modes),
             Opcode::ARB => self.arb(&param_modes),
             Opcode::BRK => return CpuStatus::Finished,
-            _ => panic!("Invalid opcode: {}", opcode as i64),
         }
 
         CpuStatus::Running
