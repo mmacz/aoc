@@ -12,13 +12,13 @@ struct Coords {
 
 struct Line {
     coord: i64,
-    tuple: (i64, i64)
+    tuple: (i64, i64),
 }
 
 #[derive(Clone)]
 struct Point {
     x: i64,
-    y: i64
+    y: i64,
 }
 
 impl Coords {
@@ -188,10 +188,8 @@ impl Solver for Problem {
         let mut intersections = get_intersections(&lines1.0, &lines2.1);
         intersections.extend(get_intersections(&lines2.0, &lines1.1));
 
-        let wires: Vec<Vec<Coords>> = vec![
-            get_wire_lines(input::WIRE1), get_wire_lines(input::WIRE2)
-        ];
+        let wires: Vec<Vec<Coords>> =
+            vec![get_wire_lines(input::WIRE1), get_wire_lines(input::WIRE2)];
         get_min_steps(&wires, &intersections)
     }
 }
-

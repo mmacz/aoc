@@ -1,9 +1,8 @@
 mod input;
-use crate::solver::Solver;
 use crate::intcode::*;
+use crate::solver::Solver;
 
 pub struct Problem;
-
 
 impl Solver for Problem {
     type Ans1 = i64;
@@ -33,4 +32,3 @@ impl Solver for Problem {
         100 * n + v
     }
 }
-

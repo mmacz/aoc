@@ -15,5 +15,3 @@ pub trait Solver {
         println!("Answer 2: {}", a2);
     }
 }
-
-

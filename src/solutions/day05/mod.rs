@@ -1,14 +1,6 @@
 mod input;
 use crate::intcode::*;
 use crate::solver::Solver;
-use std::str::FromStr;
-
-fn get_program(program: &str) -> Vec<i64> {
-    program
-        .split(",")
-        .filter_map(|c| i64::from_str(c).ok())
-        .collect()
-}
 
 pub struct Problem;
 
@@ -28,4 +20,3 @@ impl Solver for Problem {
         cpu.run()
     }
 }
-

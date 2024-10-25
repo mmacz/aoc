@@ -19,7 +19,7 @@ enum Opcode {
     LT,
     EQ,
     ARB,
-    BRK
+    BRK,
 }
 
 #[derive(Debug, Eq, PartialEq)]
@@ -42,7 +42,7 @@ impl From<i64> for Opcode {
             8 => Opcode::EQ,
             9 => Opcode::ARB,
             99 => Opcode::BRK,
-            _ => panic!("Invalid opcode: {}!", val)
+            _ => panic!("Invalid opcode: {}!", val),
         }
     }
 }
@@ -53,7 +53,7 @@ impl From<i64> for ParamMode {
             0 => ParamMode::Position,
             1 => ParamMode::Immediate,
             2 => ParamMode::Relative,
-            _ => panic!("Invalid parameter mode: {}!", val)
+            _ => panic!("Invalid parameter mode: {}!", val),
         }
     }
 }
@@ -83,11 +83,20 @@ impl Cpu {
         };
     }
 
-
     pub fn push_input(&mut self, input: i64) {
         self.inputs.push_back(input);
     }
 
+    pub fn run_until_output(&mut self) -> Option<i64> {
+        loop {
+            match self.step() {
+                CpuStatus::Output(val) => return Some(val),
+                CpuStatus::Finished => return None,
+                CpuStatus::WaitForInput => panic!("Expected input!"),
+                CpuStatus::Running => continue,
+            }
+        }
+    }
     pub fn run(&mut self) -> i64 {
         let mut last_out: i64 = 0;
         loop {
@@ -118,7 +127,6 @@ impl Cpu {
             Opcode::EQ => self.eq(&param_modes),
             Opcode::ARB => self.arb(&param_modes),
             Opcode::BRK => return CpuStatus::Finished,
-            _ => panic!("Invalid opcode: {}", opcode as i64),
         }
 
         CpuStatus::Running

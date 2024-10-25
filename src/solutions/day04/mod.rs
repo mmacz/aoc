@@ -1,6 +1,5 @@
-use std::collections::HashMap;
-mod input;
 use crate::solver::Solver;
+use std::collections::HashMap;
 
 fn validate_password(passwd: i32, can_group: bool) -> bool {
     let mut prev: i32 = -1;
@@ -63,26 +62,32 @@ impl Solver for Problem {
 
 #[cfg(test)]
 mod tests {
-    use crate::solutions::day4::*;
+    use crate::solutions::day04::*;
+
+    const SANITY_INPUTS_1: [(i32, bool); 6] = [
+        (111111, true),
+        (223450, false),
+        (123789, false),
+        (122345, true),
+        (111123, true),
+        (135679, false),
+    ];
+
+    const SANITY_INPUTS_2: [(i32, bool); 3] = [(112233, true), (123444, false), (111122, true)];
 
     #[test]
     fn test_password_grouping_enabled() {
-        let _ =input::SANITY_INPUTS_1
+        let _ = SANITY_INPUTS_1
             .iter()
-            .map(|(pass, res)| {
-                assert_eq!(validate_password(*pass, true), *res)
-            })
+            .map(|(pass, res)| assert_eq!(validate_password(*pass, true), *res))
             .collect::<Vec<_>>();
     }
 
     #[test]
     fn test_password_grouping_disabled() {
-        let _ = input::SANITY_INPUTS_2
+        let _ = SANITY_INPUTS_2
             .iter()
-            .map(|(pass, res)| {
-                assert_eq!(validate_password(*pass, false), *res)
-            })
+            .map(|(pass, res)| assert_eq!(validate_password(*pass, false), *res))
             .collect::<Vec<_>>();
     }
 }
-

@@ -9,13 +9,13 @@ pub struct Problem;
 pub struct ImgVec(Vec<u32>);
 
 impl ImgVec {
-       fn transform(&self) -> Vec<char> {
+    fn transform(&self) -> Vec<char> {
         self.0
             .iter()
             .map(|&ch| match ch {
                 0 => ' ',
                 1 => '#',
-                _ => panic!("Invalid pattern")
+                _ => panic!("Invalid pattern"),
             })
             .collect()
     }
@@ -35,7 +35,6 @@ impl fmt::Display for ImgVec {
     }
 }
 
-
 fn get_layers(input: &str, width: usize, height: usize) -> Vec<Vec<u32>> {
     let sub_size = width * height;
     let chars: Vec<char> = input.chars().collect();
@@ -51,10 +50,7 @@ fn get_layers(input: &str, width: usize, height: usize) -> Vec<Vec<u32>> {
 }
 
 fn count_digits(layer: &Vec<u32>, digit: u32) -> usize {
-    layer
-        .iter()
-        .filter(|&&d| d == digit)
-        .count()
+    layer.iter().filter(|&&d| d == digit).count()
 }
 
 impl Solver for Problem {
@@ -63,10 +59,7 @@ impl Solver for Problem {
 
     fn solution1(&self) -> Self::Ans1 {
         let layers = get_layers(input::INPUT, IMG_WIDTH, IMG_HEIGHT);
-        let zeros_cnt: Vec<usize> = layers
-            .iter()
-            .map(|l| count_digits(l, 0))
-            .collect();
+        let zeros_cnt: Vec<usize> = layers.iter().map(|l| count_digits(l, 0)).collect();
         let mzi: usize = zeros_cnt
             .iter()
             .enumerate()
@@ -82,14 +75,12 @@ impl Solver for Problem {
         let layers = get_layers(input::INPUT, IMG_WIDTH, IMG_HEIGHT);
         let first_layer = layers[0].clone();
 
-        ImgVec(first_layer
-            .into_iter()
-            .enumerate()
-            .map(|(idx, pixel)| {
-                layers
-                    .iter()
-                    .skip(1)
-                    .fold(pixel, |acc, layer| {
+        ImgVec(
+            first_layer
+                .into_iter()
+                .enumerate()
+                .map(|(idx, pixel)| {
+                    layers.iter().skip(1).fold(pixel, |acc, layer| {
                         let r: u32;
                         match acc {
                             0 => r = 0,
@@ -100,8 +91,7 @@ impl Solver for Problem {
                         r
                     })
                 })
-            .collect()
+                .collect(),
         )
     }
 }
-

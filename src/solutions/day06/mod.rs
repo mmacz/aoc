@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use crate::solver::Solver;
+use std::collections::HashMap;
 mod input;
 
 fn count(map: &HashMap<&str, &str>, item: &str) -> usize {
@@ -55,5 +55,3 @@ impl Solver for Problem {
         distance(input::INPUT, "YOU", "SAN")
     }
 }
-
-

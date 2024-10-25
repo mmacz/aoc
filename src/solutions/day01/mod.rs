@@ -1,6 +1,6 @@
 mod input;
-use std::iter::successors;
 use crate::solver::Solver;
+use std::iter::successors;
 
 pub struct Problem;
 
@@ -12,7 +12,6 @@ fn total_fuel(mass: u64) -> u64 {
     successors(Some(fuel_counter(mass)), |&m| Some(fuel_counter(m)))
         .take_while(|&m| m != 0)
         .sum()
-
 }
 
 impl Solver for Problem {
@@ -30,7 +29,7 @@ impl Solver for Problem {
 
 #[cfg(test)]
 mod tests {
-    use crate::solutions::day1::*;
+    use crate::solutions::day01::*;
 
     #[test]
     fn test_fuel_counter() {
@@ -48,4 +47,3 @@ mod tests {
         assert_eq!(total_fuel(100_756), 50346);
     }
 }
-
