@@ -1,5 +1,5 @@
 use crate::solver::Solver;
-use std::string::String;
+use std::fmt;
 
 mod input;
 
@@ -10,6 +10,7 @@ impl Solver for Problem {
     type Ans2 = i64;
 
     fn solution1(&self) -> Self::Ans1 {
+        let _ = Moons::new(input::INPUT);
         0
     }
     
@@ -22,32 +23,67 @@ impl Solver for Problem {
 struct Moon {
     positions: [i32; 3],
     velocity: [i32; 3],
+    id: usize,
 }
 impl Moon {
-    fn new(pos: &Vec<i32>) -> Moon {
+    fn new(pos: &Vec<i32>, id: usize) -> Moon {
         Moon {
             positions: [ pos[0], pos[1], pos[2] ],
-            velocity: [0, 0, 0]
+            velocity: [0, 0, 0],
+            id: id,
         }
     }
 }
 
-fn parse_scan_data(scan_data: &str) -> Vec<Moon> {
-    scan_data
-        .lines()
-        .skip(1)
-        .map(|moon_data| {
-            let positions: Vec<i32> = moon_data[1..moon_data.len() - 1]
-                .split(',')
-                .map(|pos_str| {
-                    pos_str.trim()[2..].parse::<i32>().unwrap()
-                })
-                .collect();
-            Moon::new(&positions)
-        })
-        .collect()
+struct Moons {
+    list: Vec<Moon>,
 }
 
+impl fmt::Display for Moons {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        for m in &self.list {
+            writeln!(f, "pos=<x={:3}, y={:3}, z={:3}>, vel=<x={:3}. y={:3}, z={:3}>",
+                m.positions[0], m.positions[1], m.positions[2],
+                m.velocity[0], m.velocity[1], m.velocity[2]);
+        }
+
+        Ok(())
+    }
+}
+
+impl Moons {
+    fn new(scan_data: &str) -> Moons {
+        Moons {
+            list: scan_data
+                .lines()
+                .skip(1)
+                .enumerate()
+                .map(|(idx, moon_data)| {
+                    let positions: Vec<i32> = moon_data[1..moon_data.len() - 1]
+                        .split(',')
+                        .map(|pos_str| {
+                            pos_str.trim()[2..].parse::<i32>().unwrap()
+                        })
+                        .collect();
+                    Moon::new(&positions, idx)
+                })
+                .collect()
+        }
+    }
+
+    fn apply_gravity(&mut self) {
+        for moon in &self.list {
+            let x_lower: i32 = 0;
+            let y_lower: i32 = 0;
+            let z_lower: i32 = 0;
+            for cmp_moon in &self.list {
+                if moon.id == cmp_moon.id {
+                    continue;
+                }
+            }
+        }
+    }
+}
 
 #[cfg(test)]
 mod test {
@@ -55,7 +91,8 @@ mod test {
 
     #[test]
     fn test_gravity_apply() {
-        let moons = parse_scan_data(INPUT1);
+        let m = Moons::new(INPUT1);
+        println!("{}", m);
     }
 
 //10 steps, 179 energy
