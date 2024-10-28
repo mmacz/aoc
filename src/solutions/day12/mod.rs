@@ -7,8 +7,8 @@ mod input;
 pub struct Problem;
 
 impl Solver for Problem {
-    type Ans1 = i32;
-    type Ans2 = i64;
+    type Ans1 = i64;
+    type Ans2 = usize;
 
     fn solution1(&self) -> Self::Ans1 {
         let mut moons = Moons::new(input::INPUT);
@@ -17,17 +17,35 @@ impl Solver for Problem {
     }
     
     fn solution2(&self) -> Self::Ans2 {
-        0
+        let mut moons = Moons::new(input::INPUT);
+        let initial_pos = moons.copy_pos();
+        let mut loop_cnt: usize = 0;
+
+        loop {
+            moons.step_n(1);
+            loop_cnt = loop_cnt + 1;
+
+            let universe_loop = moons.copy_pos();
+            let len = initial_pos.len();
+            for i in 0..len {
+                if  (initial_pos[i][0] == universe_loop[i][0])
+                    && (initial_pos[i][1] == universe_loop[i][1])
+                    && (initial_pos[i][2] == universe_loop[i][2]) 
+                {
+                    return loop_cnt;
+                }
+            }
+        }
     }
 }
 
 
 struct Moon {
-    positions: [i32; 3],
-    velocity: [i32; 3],
+    positions: [i64; 3],
+    velocity: [i64; 3],
 }
 impl Moon {
-    fn new(pos: &Vec<i32>) -> Moon {
+    fn new(pos: &Vec<i64>) -> Moon {
         Moon {
             positions: [ pos[0], pos[1], pos[2] ],
             velocity: [0, 0, 0],
@@ -44,7 +62,7 @@ impl fmt::Display for Moons {
         for m in &self.list {
             writeln!(f, "pos=<x={:3}, y={:3}, z={:3}>, vel=<x={:3}. y={:3}, z={:3}>",
                 m.positions[0], m.positions[1], m.positions[2],
-                m.velocity[0], m.velocity[1], m.velocity[2]);
+                m.velocity[0], m.velocity[1], m.velocity[2])?;
         }
 
         Ok(())
@@ -58,10 +76,10 @@ impl Moons {
                 .lines()
                 .skip(1)
                 .map(|moon_data| {
-                    let positions: Vec<i32> = moon_data[1..moon_data.len() - 1]
+                    let positions: Vec<i64> = moon_data[1..moon_data.len() - 1]
                         .split(',')
                         .map(|pos_str| {
-                            pos_str.trim()[2..].parse::<i32>().unwrap()
+                            pos_str.trim()[2..].parse::<i64>().unwrap()
                         })
                         .collect();
                     Moon::new(&positions)
@@ -95,25 +113,35 @@ impl Moons {
     }
 
     fn step_n(&mut self, steps: usize) {
-        for n in 0..steps {
+        for _ in 0..steps {
             self.apply_gravity();
             self.apply_velocity();
         }
     }
 
-    fn energy(&self) -> i32 {
+    fn energy(&self) -> i64 {
         self.list
             .iter()
             .map(|moon| {
-                let pot: i32 = moon.positions.iter().map(|p| p.abs()).sum();
-                let kin: i32 = moon.velocity.iter().map(|v| v.abs()).sum();
+                let pot: i64 = moon.positions.iter().map(|p| p.abs()).sum();
+                let kin: i64 = moon.velocity.iter().map(|v| v.abs()).sum();
                 pot * kin
             })
             .sum()
     }
+
+    fn copy_pos(&self) -> Vec<[i64; 3]> {
+        let mut pos: Vec<[i64; 3]> = Vec::new();
+
+        for m in &self.list {
+            pos.push(m.positions.clone());
+        }
+
+        pos
+    }
 }
 
-fn calc_axis_velocity(v1: i32, v2: i32) -> i32 {
+fn calc_axis_velocity(v1: i64, v2: i64) -> i64 {
     let diff = v1 - v2;
     match diff.cmp(&0) {
         Ordering::Less => 1,
@@ -139,6 +167,39 @@ mod test {
         m.step_n(100);
         assert_eq!(1940, m.energy());
     }
+
+    #[test]
+    fn test_universe_loop_repeated_after_2772() {
+        let mut m = Moons::new(INPUT1);
+        let initial_pos = m.copy_pos();
+
+        m.step_n(2772);
+        let universe_loop = m.copy_pos();
+
+        let len = initial_pos.len();
+        for i in 0..len {
+            assert_eq!(initial_pos[i][0], universe_loop[i][0], "Invalid positions for {} moon", i);
+            assert_eq!(initial_pos[i][1], universe_loop[i][1], "Invalid positions for {} moon", i);
+            assert_eq!(initial_pos[i][2], universe_loop[i][2], "Invalid positions for {} moon", i);
+        }
+    }
+
+    #[test]
+    fn test_universe_loop_repeated_after_4686774924() {
+        let mut m = Moons::new(INPUT2);
+        let initial_pos = m.copy_pos();
+
+        m.step_n(4686774924);
+        let universe_loop = m.copy_pos();
+
+        let len = initial_pos.len();
+        for i in 0..len {
+            assert_eq!(initial_pos[i][0], universe_loop[i][0], "Invalid positions for {} moon", i);
+            assert_eq!(initial_pos[i][1], universe_loop[i][1], "Invalid positions for {} moon", i);
+            assert_eq!(initial_pos[i][2], universe_loop[i][2], "Invalid positions for {} moon", i);
+        }
+    }
+
 
 //10 steps, 179 energy
 const INPUT1: &str = "
