@@ -3,4 +3,3 @@ pub const INPUT: &str = "
 <x=2, y=9, z=5>
 <x=10, y=18, z=-12>
 <x=-6, y=15, z=-7>";
-

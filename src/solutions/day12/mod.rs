@@ -1,5 +1,4 @@
 use crate::solver::Solver;
-use std::fmt;
 use std::cmp::Ordering;
 use std::collections::HashSet;
 
@@ -16,13 +15,12 @@ impl Solver for Problem {
         moons.step_n(1000);
         moons.energy()
     }
-    
+
     fn solution2(&self) -> Self::Ans2 {
         let mut moons = Moons::new(input::INPUT);
         moons.find_cycle()
     }
 }
-
 
 struct Moon {
     positions: [i64; 3],
@@ -31,7 +29,7 @@ struct Moon {
 impl Moon {
     fn new(pos: &Vec<i64>) -> Moon {
         Moon {
-            positions: [ pos[0], pos[1], pos[2] ],
+            positions: [pos[0], pos[1], pos[2]],
             velocity: [0, 0, 0],
         }
     }
@@ -40,19 +38,6 @@ impl Moon {
 struct Moons {
     list: Vec<Moon>,
 }
-
-impl fmt::Display for Moons {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for m in &self.list {
-            writeln!(f, "pos=<x={:3}, y={:3}, z={:3}>, vel=<x={:3}. y={:3}, z={:3}>",
-                m.positions[0], m.positions[1], m.positions[2],
-                m.velocity[0], m.velocity[1], m.velocity[2])?;
-        }
-
-        Ok(())
-    }
-}
-
 impl Moons {
     fn new(scan_data: &str) -> Moons {
         Moons {
@@ -62,13 +47,11 @@ impl Moons {
                 .map(|moon_data| {
                     let positions: Vec<i64> = moon_data[1..moon_data.len() - 1]
                         .split(',')
-                        .map(|pos_str| {
-                            pos_str.trim()[2..].parse::<i64>().unwrap()
-                        })
+                        .map(|pos_str| pos_str.trim()[2..].parse::<i64>().unwrap())
                         .collect();
                     Moon::new(&positions)
                 })
-                .collect()
+                .collect(),
         }
     }
 
@@ -106,12 +89,12 @@ impl Moons {
                 if i != j {
                     self.list[i].velocity[axis] += calc_axis_velocity(
                         self.list[i].positions[axis],
-                        self.list[j].positions[axis]
+                        self.list[j].positions[axis],
                     );
                 }
             }
         }
-        
+
         for moon in &mut self.list {
             moon.positions[axis] += moon.velocity[axis];
         }
@@ -125,9 +108,12 @@ impl Moons {
                 if i == j {
                     continue;
                 }
-                moons[i].velocity[0] += calc_axis_velocity(moons[i].positions[0], moons[j].positions[0]);
-                moons[i].velocity[1] += calc_axis_velocity(moons[i].positions[1], moons[j].positions[1]);
-                moons[i].velocity[2] += calc_axis_velocity(moons[i].positions[2], moons[j].positions[2]);
+                moons[i].velocity[0] +=
+                    calc_axis_velocity(moons[i].positions[0], moons[j].positions[0]);
+                moons[i].velocity[1] +=
+                    calc_axis_velocity(moons[i].positions[1], moons[j].positions[1]);
+                moons[i].velocity[2] +=
+                    calc_axis_velocity(moons[i].positions[2], moons[j].positions[2]);
             }
         }
     }
@@ -164,7 +150,7 @@ fn calc_axis_velocity(v1: i64, v2: i64) -> i64 {
     match diff.cmp(&0) {
         Ordering::Less => 1,
         Ordering::Equal => 0,
-        Ordering::Greater => -1
+        Ordering::Greater => -1,
     }
 }
 
@@ -203,17 +189,7 @@ mod test {
     #[test]
     fn test_universe_loop_repeated_after_2772() {
         let mut m = Moons::new(INPUT1);
-        let initial_pos = m.copy_pos();
-
-        m.step_n(2772);
-        let universe_loop = m.copy_pos();
-
-        let len = initial_pos.len();
-        for i in 0..len {
-            assert_eq!(initial_pos[i][0], universe_loop[i][0], "Invalid positions for {} moon", i);
-            assert_eq!(initial_pos[i][1], universe_loop[i][1], "Invalid positions for {} moon", i);
-            assert_eq!(initial_pos[i][2], universe_loop[i][2], "Invalid positions for {} moon", i);
-        }
+        assert_eq!(2772, m.find_cycle());
     }
 
     #[test]
@@ -222,19 +198,17 @@ mod test {
         assert_eq!(4686774924, m.find_cycle());
     }
 
-
-//10 steps, 179 energy
-const INPUT1: &str = "
+    //10 steps, 179 energy
+    const INPUT1: &str = "
 <x=-1, y=0, z=2>
 <x=2, y=-10, z=-7>
 <x=4, y=-8, z=8>
 <x=3, y=5, z=-1>";
 
-// 100 steps, 1940
-const INPUT2: &str = "
+    // 100 steps, 1940
+    const INPUT2: &str = "
 <x=-8, y=-10, z=0>
 <x=5, y=5, z=10>
 <x=2, y=-7, z=3>
 <x=9, y=-8, z=-3>";
 }
-
