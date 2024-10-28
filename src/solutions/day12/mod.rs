@@ -1,6 +1,7 @@
 use crate::solver::Solver;
 use std::fmt;
 use std::cmp::Ordering;
+use std::collections::HashSet;
 
 mod input;
 
@@ -18,24 +19,7 @@ impl Solver for Problem {
     
     fn solution2(&self) -> Self::Ans2 {
         let mut moons = Moons::new(input::INPUT);
-        let initial_pos = moons.copy_pos();
-        let mut loop_cnt: usize = 0;
-
-        loop {
-            moons.step_n(1);
-            loop_cnt = loop_cnt + 1;
-
-            let universe_loop = moons.copy_pos();
-            let len = initial_pos.len();
-            for i in 0..len {
-                if  (initial_pos[i][0] == universe_loop[i][0])
-                    && (initial_pos[i][1] == universe_loop[i][1])
-                    && (initial_pos[i][2] == universe_loop[i][2]) 
-                {
-                    return loop_cnt;
-                }
-            }
-        }
+        moons.find_cycle()
     }
 }
 
@@ -88,6 +72,50 @@ impl Moons {
         }
     }
 
+    fn find_cycle(&mut self) -> usize {
+        let x = self.find_axis_cycle(0);
+        let y = self.find_axis_cycle(1);
+        let z = self.find_axis_cycle(2);
+
+        lcm(lcm(x, y), z)
+    }
+
+    fn find_axis_cycle(&mut self, axis: usize) -> usize {
+        let mut states = HashSet::new();
+        let mut step: usize = 0;
+        loop {
+            let mut state = Vec::with_capacity(self.list.len() * 2);
+            for moon in &self.list {
+                state.push(moon.positions[axis]);
+                state.push(moon.velocity[axis]);
+            }
+            let state = state.into_iter().collect::<Vec<_>>();
+            if !states.insert(state) {
+                return step;
+            }
+
+            self.step_axis(axis);
+            step += 1;
+        }
+    }
+
+    fn step_axis(&mut self, axis: usize) {
+        let len = self.list.len();
+        for i in 0..len {
+            for j in 0..len {
+                if i != j {
+                    self.list[i].velocity[axis] += calc_axis_velocity(
+                        self.list[i].positions[axis],
+                        self.list[j].positions[axis]
+                    );
+                }
+            }
+        }
+        
+        for moon in &mut self.list {
+            moon.positions[axis] += moon.velocity[axis];
+        }
+    }
 
     fn apply_gravity(&mut self) {
         let len = self.list.len();
@@ -150,6 +178,20 @@ fn calc_axis_velocity(v1: i64, v2: i64) -> i64 {
     }
 }
 
+fn lcm(a: usize, b: usize) -> usize {
+    let gcd = {
+        let mut x = a;
+        let mut y = b;
+        while y != 0 {
+            let t = y;
+            y = x % y;
+            x = t;
+        }
+        x
+    };
+    a * (b / gcd)
+}
+
 #[cfg(test)]
 mod test {
     use crate::solutions::day12::*;
@@ -187,17 +229,7 @@ mod test {
     #[test]
     fn test_universe_loop_repeated_after_4686774924() {
         let mut m = Moons::new(INPUT2);
-        let initial_pos = m.copy_pos();
-
-        m.step_n(4686774924);
-        let universe_loop = m.copy_pos();
-
-        let len = initial_pos.len();
-        for i in 0..len {
-            assert_eq!(initial_pos[i][0], universe_loop[i][0], "Invalid positions for {} moon", i);
-            assert_eq!(initial_pos[i][1], universe_loop[i][1], "Invalid positions for {} moon", i);
-            assert_eq!(initial_pos[i][2], universe_loop[i][2], "Invalid positions for {} moon", i);
-        }
+        assert_eq!(4686774924, m.find_cycle());
     }
 
 
