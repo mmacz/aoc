@@ -157,16 +157,6 @@ impl Moons {
             })
             .sum()
     }
-
-    fn copy_pos(&self) -> Vec<[i64; 3]> {
-        let mut pos: Vec<[i64; 3]> = Vec::new();
-
-        for m in &self.list {
-            pos.push(m.positions.clone());
-        }
-
-        pos
-    }
 }
 
 fn calc_axis_velocity(v1: i64, v2: i64) -> i64 {
