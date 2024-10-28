@@ -1,5 +1,5 @@
-use crate::solver::Solver;
 use crate::intcode::*;
+use crate::solver::Solver;
 use std::collections::HashSet;
 
 mod input;
@@ -27,7 +27,7 @@ enum TileID {
     WALL,
     BLOCK,
     PADDLE,
-    BALL
+    BALL,
 }
 
 impl From<i64> for TileID {
@@ -38,7 +38,7 @@ impl From<i64> for TileID {
             2 => TileID::BLOCK,
             3 => TileID::PADDLE,
             4 => TileID::BALL,
-            _ => panic!("Unknown ID for tile: {}", val)
+            _ => panic!("Unknown ID for tile: {}", val),
         }
     }
 }
@@ -59,11 +59,11 @@ impl From<TileID> for i64 {
 struct Tile {
     x: i64,
     y: i64,
-    id: TileID
+    id: TileID,
 }
 impl Tile {
     fn new(x: i64, y: i64, id: TileID) -> Tile {
-        Tile { x: x, y: y, id: id}
+        Tile { x: x, y: y, id: id }
     }
 }
 
@@ -72,7 +72,7 @@ struct Game {
     screen: HashSet<Tile>,
     paddle_x: i64,
     ball_x: i64,
-    score: i64
+    score: i64,
 }
 impl Game {
     fn new(program: &str) -> Game {
@@ -80,8 +80,8 @@ impl Game {
             cpu: Cpu::new(program),
             screen: HashSet::new(),
             paddle_x: 0,
-            ball_x : 0,
-            score: 0
+            ball_x: 0,
+            score: 0,
         }
     }
 
@@ -91,20 +91,24 @@ impl Game {
         let mut y: i64 = 0;
         loop {
             match self.cpu.step() {
-                CpuStatus::Output(out) => {
-                    match out_cnt {
-                        0 => { x = out; out_cnt += 1; },
-                        1 => { y = out; out_cnt += 1; },
-                        2 => {
-                            self.screen.insert(Tile::new(x, y, out.into()));
-                            out_cnt = 0; 
-                        },
-                        _ => panic!("Invalid out cnt: {}", out_cnt)
+                CpuStatus::Output(out) => match out_cnt {
+                    0 => {
+                        x = out;
+                        out_cnt += 1;
                     }
+                    1 => {
+                        y = out;
+                        out_cnt += 1;
+                    }
+                    2 => {
+                        self.screen.insert(Tile::new(x, y, out.into()));
+                        out_cnt = 0;
+                    }
+                    _ => panic!("Invalid out cnt: {}", out_cnt),
                 },
                 CpuStatus::Running => continue,
                 CpuStatus::Finished => break,
-                CpuStatus::WaitForInput => unreachable!()
+                CpuStatus::WaitForInput => unreachable!(),
             }
         }
     }
@@ -116,29 +120,31 @@ impl Game {
         self.cpu.code[0] = 2;
         loop {
             match self.cpu.step() {
-                CpuStatus::Output(out) => {
-                    match out_cnt {
-                        0 => { x = out; out_cnt += 1; },
-                        1 => { y = out; out_cnt += 1; },
-                        2 => {
-                            if x == -1 && y == 0 {
-                                self.score = out;
-                                out_cnt = 0;
-                            }
-                            else {
-                                self.screen.insert(Tile::new(x, y, out.into()));
-                                if TileID::BALL == out.into() {
-                                    self.ball_x = x;
-                                }
-                                else if TileID::PADDLE == out.into() {
-                                    self.paddle_x = x;
-                                }
-
-                                out_cnt = 0; 
-                            }
-                        },
-                        _ => panic!("Invalid out cnt: {}", out_cnt)
+                CpuStatus::Output(out) => match out_cnt {
+                    0 => {
+                        x = out;
+                        out_cnt += 1;
                     }
+                    1 => {
+                        y = out;
+                        out_cnt += 1;
+                    }
+                    2 => {
+                        if x == -1 && y == 0 {
+                            self.score = out;
+                            out_cnt = 0;
+                        } else {
+                            self.screen.insert(Tile::new(x, y, out.into()));
+                            if TileID::BALL == out.into() {
+                                self.ball_x = x;
+                            } else if TileID::PADDLE == out.into() {
+                                self.paddle_x = x;
+                            }
+
+                            out_cnt = 0;
+                        }
+                    }
+                    _ => panic!("Invalid out cnt: {}", out_cnt),
                 },
                 CpuStatus::Running => continue,
                 CpuStatus::Finished => break,
@@ -146,11 +152,9 @@ impl Game {
                     let input: i64;
                     if self.ball_x < self.paddle_x {
                         input = -1;
-                    }
-                    else if self.ball_x > self.paddle_x {
+                    } else if self.ball_x > self.paddle_x {
                         input = 1;
-                    }
-                    else {
+                    } else {
                         input = 0;
                     }
                     self.cpu.push_input(input);
@@ -161,10 +165,6 @@ impl Game {
     }
 
     fn count_tiles(&self, id: TileID) -> usize {
-        self.screen
-            .iter()
-            .filter(|t| t.id == id)
-            .count()
+        self.screen.iter().filter(|t| t.id == id).count()
     }
 }
-
