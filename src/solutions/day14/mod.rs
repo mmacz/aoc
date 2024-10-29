@@ -7,24 +7,25 @@ mod input;
 
 #[derive(Eq, PartialEq, Hash, Clone, Debug)]
 struct Ingredient {
-    qty: usize,
+    qty: isize,
     name: String
 }
 impl Ingredient {
     fn new(ing_str: &str) -> Ingredient {
         let mut ing_iter = ing_str.trim().split(" ");
-        let qty: usize = ing_iter.next().unwrap().parse::<usize>().unwrap();
+        let qty: isize = ing_iter.next().unwrap().parse::<isize>().unwrap();
         let name = ing_iter.next().unwrap();
         Ingredient { qty: qty, name: name.to_string() }
     }
 }
 type Ingredients = Vec<Ingredient>;
 type Reactions = HashMap<Ingredient, Ingredients>;
+type Requirements = HashMap<String, isize>;
 
 pub struct Problem;
 impl Solver for Problem {
-    type Ans1 = usize;
-    type Ans2 = usize;
+    type Ans1 = isize;
+    type Ans2 = isize;
 
     fn solution1(&self) -> Self::Ans1 {
         let nf = Nanofactory::new(input::INPUT);
@@ -44,8 +45,26 @@ impl Nanofactory {
         Nanofactory { reacts: parse_reactions(reactions) }
     }
 
-    fn require_ore_est(&self) -> usize {
-        0
+    fn est_ore_for_fuel(&self) -> isize {
+        let mut reqs: Requirements = Requirements::new();
+        reqs.insert("FUEL".to_string(), 1);
+        while let Some(&_cnt) = reqs
+            .iter()
+            .find(|(&ref name, &cnt)| name != "ORE" && cnt > 0)
+            .map(|(_, cnt)| cnt) {
+                let ing = reqs.iter().find(|(&ref name, &cnt)| name != "ORE" && cnt > 0).map(|(name, _)| name.clone()).unwrap();
+                let prod = self.reacts.iter().find(|(prod, _)| prod.name == ing).map(|(prod, _)| prod.clone()).unwrap();
+
+                let needed = reqs[&ing];
+                let qty = (needed as f64 / prod.qty as f64).ceil() as isize;
+
+                *reqs.get_mut(&ing).unwrap() -= qty * prod.qty;
+
+                for ing in self.reacts.get(&prod).unwrap() {
+                    *reqs.entry(ing.name.clone()).or_insert(0) += qty * ing.qty;
+                }
+            }
+        *reqs.get("ORE").unwrap_or(&0) as isize
     }
 }
 
@@ -95,8 +114,7 @@ mod tests {
     #[test]
     fn test_short_input() {
         let nf = Nanofactory::new(INPUT1);
-        println!("{}", nf.to_string());
-        assert_eq!(31, nf.require_ore_est());
+        assert_eq!(31, nf.est_ore_for_fuel());
     }
 
 // 31
