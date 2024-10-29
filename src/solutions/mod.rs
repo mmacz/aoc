@@ -1,3 +1,4 @@
+use std::time::{SystemTime, UNIX_EPOCH};
 use crate::solver::Solver;
 mod day01;
 mod day02;
@@ -12,8 +13,10 @@ mod day10;
 mod day11;
 mod day12;
 mod day13;
+mod day14;
 
 pub fn run_solutions() {
+    let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
     day01::Problem {}.solve(1);
     day02::Problem {}.solve(2);
     day03::Problem {}.solve(3);
@@ -27,4 +30,8 @@ pub fn run_solutions() {
     day11::Problem {}.solve(11);
     day12::Problem {}.solve(12);
     day13::Problem {}.solve(13);
+    day14::Problem {}.solve(14);
+    let end = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
+
+    println!(" ******** AOC solutions time: {:#?} ******** ", end - start);
 }
