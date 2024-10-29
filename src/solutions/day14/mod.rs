@@ -29,7 +29,7 @@ impl Solver for Problem {
 
     fn solution1(&self) -> Self::Ans1 {
         let nf = Nanofactory::new(input::INPUT);
-        0
+        nf.est_ore_for_fuel()
     }
 
     fn solution2(&self) -> Self::Ans2 {
@@ -115,6 +115,24 @@ mod tests {
     fn test_short_input() {
         let nf = Nanofactory::new(INPUT1);
         assert_eq!(31, nf.est_ore_for_fuel());
+    }
+
+    #[test]
+    fn test_longer_input() {
+        let nf = Nanofactory::new(INPUT2);
+        assert_eq!(13312, nf.est_ore_for_fuel());
+    }
+
+    #[test]
+    fn test_medium_input() {
+        let nf = Nanofactory::new(INPUT3);
+        assert_eq!(180697, nf.est_ore_for_fuel());
+    }
+
+    #[test]
+    fn test_longest_input() {
+        let nf = Nanofactory::new(INPUT4);
+        assert_eq!(2210736, nf.est_ore_for_fuel());
     }
 
 // 31
