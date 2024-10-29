@@ -1,6 +1,25 @@
-use crate::solver::Solver;
+use std::string::String;
+use std::collections::HashMap;
+use std::fmt;
 
+use crate::solver::Solver;
 mod input;
+
+#[derive(Eq, PartialEq, Hash, Clone, Debug)]
+struct Ingredient {
+    qty: usize,
+    name: String
+}
+impl Ingredient {
+    fn new(ing_str: &str) -> Ingredient {
+        let mut ing_iter = ing_str.trim().split(" ");
+        let qty: usize = ing_iter.next().unwrap().parse::<usize>().unwrap();
+        let name = ing_iter.next().unwrap();
+        Ingredient { qty: qty, name: name.to_string() }
+    }
+}
+type Ingredients = Vec<Ingredient>;
+type Reactions = HashMap<Ingredient, Ingredients>;
 
 pub struct Problem;
 impl Solver for Problem {
@@ -8,6 +27,7 @@ impl Solver for Problem {
     type Ans2 = usize;
 
     fn solution1(&self) -> Self::Ans1 {
+        let nf = Nanofactory::new(input::INPUT);
         0
     }
 
@@ -16,18 +36,80 @@ impl Solver for Problem {
     }
 }
 
-struct Nanofactory;
+struct Nanofactory {
+    reacts: Reactions
+}
 impl Nanofactory {
-    fn new(rections: &str) -> Nanofactory {
-        Nanofactory
+    fn new(reactions: &str) -> Nanofactory {
+        Nanofactory { reacts: parse_reactions(reactions) }
     }
+
+    fn require_ore_est(&self) -> usize {
+        0
+    }
+}
+
+impl fmt::Display for Ingredient {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{} {}", self.qty, self.name)
+    }
+}
+
+impl fmt::Display for Nanofactory {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "\n")?;
+        for (prod, ings) in self.reacts.iter() {
+            let ings_str = ings.iter().map(|i| i.to_string() + ",").collect::<String>();
+            writeln!(f, "{} => {}", ings_str.trim_end_matches(","), prod)?;
+        }
+        Ok(())
+    }
+}
+
+fn parse_reactions(reactions: &str) -> Reactions {
+    let mut reacts: Reactions = Reactions::new();
+    let _: Vec<_> = reactions
+        .lines()
+        .skip(1)
+        .map(|reaction| {
+            let mut iter = reaction.split("=>");
+            let ingredients_str = iter.next().unwrap();
+            let product = iter.next().unwrap();
+            let ingredients: Ingredients = ingredients_str
+                .split(",")
+                .into_iter()
+                .map(|ing| {
+                    Ingredient::new(ing.trim())
+                })
+                .collect();
+            reacts.entry(Ingredient::new(product)).or_insert(ingredients);
+        })
+        .collect();
+    reacts
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::solutions::day14::*;
+
+    #[test]
+    fn test_short_input() {
+        let nf = Nanofactory::new(INPUT1);
+        println!("{}", nf.to_string());
+        assert_eq!(31, nf.require_ore_est());
+    }
+
+// 31
+const INPUT1: &str = "
+10 ORE => 10 A
+1 ORE => 1 B
+7 A, 1 B => 1 C
+7 A, 1 C => 1 D
+7 A, 1 D => 1 E
+7 A, 1 E => 1 FUEL";
 
 // 13312 ORE for 1 FUEL
-const INPUT1: &str = "
+const INPUT2: &str = "
 157 ORE => 5 NZVS
 165 ORE => 6 DCFZ
 44 XJWVT, 5 KHKGT, 1 QDVJ, 29 NZVS, 9 GPVTF, 48 HKGWZ => 1 FUEL
@@ -39,7 +121,7 @@ const INPUT1: &str = "
 3 DCFZ, 7 NZVS, 5 HKGWZ, 10 PSHF => 8 KHKGT";
 
 // 180697 ORE for 1 FUEL
-const INPUT2: &str = "
+const INPUT3: &str = "
 2 VPVL, 7 FWMGM, 2 CXFTF, 11 MNCFX => 1 STKFG
 17 NVRVD, 3 JNWZP => 8 VPVL
 53 STKFG, 6 MNCFX, 46 VJHF, 81 HVMC, 68 CXFTF, 25 GNMV => 1 FUEL
@@ -54,7 +136,7 @@ const INPUT2: &str = "
 176 ORE => 6 VJHF";
 
 // 2210736 ORE for 1 FUEL
-const INPUT3: &str = "
+const INPUT4: &str = "
 171 ORE => 8 CNZTR
 7 ZLQW, 3 BMBT, 9 XCVML, 26 XMNCP, 1 WPTQ, 2 MZWV, 1 RJRHP => 4 PLWSL
 114 ORE => 4 BHXH
