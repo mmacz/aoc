@@ -19,7 +19,7 @@ This repository gathers solutions for the AOC 2019. All of the solutions are dev
 |11| ⭐⭐|
 |12 |⭐⭐|
 |13 |⭐⭐|
-|14 ||
+|14 |⭐⭐|
 |15 ||
 |16 ||
 |17 ||

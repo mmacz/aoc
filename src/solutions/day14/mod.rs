@@ -29,11 +29,12 @@ impl Solver for Problem {
 
     fn solution1(&self) -> Self::Ans1 {
         let nf = Nanofactory::new(input::INPUT);
-        nf.est_ore_for_fuel()
+        nf.est_ore_for_fuel(1)
     }
 
     fn solution2(&self) -> Self::Ans2 {
-        0
+        let nf = Nanofactory::new(input::INPUT);
+        nf.max_fuel_for_trillion_ore()
     }
 }
 
@@ -45,9 +46,9 @@ impl Nanofactory {
         Nanofactory { reacts: parse_reactions(reactions) }
     }
 
-    fn est_ore_for_fuel(&self) -> isize {
+    fn est_ore_for_fuel(&self, n: isize) -> isize {
         let mut reqs: Requirements = Requirements::new();
-        reqs.insert("FUEL".to_string(), 1);
+        reqs.insert("FUEL".to_string(), n);
         while let Some(&_cnt) = reqs
             .iter()
             .find(|(&ref name, &cnt)| name != "ORE" && cnt > 0)
@@ -65,6 +66,33 @@ impl Nanofactory {
                 }
             }
         *reqs.get("ORE").unwrap_or(&0) as isize
+    }
+
+    fn max_fuel_for_trillion_ore(&self) -> isize {
+        const TRILLION: isize = 1_000_000_000_000;
+        let mut low = 0;
+        let mut high = TRILLION;
+
+        let mut exp_max_fuel = 1;
+        while self.est_ore_for_fuel(exp_max_fuel) <= TRILLION {
+            low = exp_max_fuel;
+            exp_max_fuel *= 2;
+            high = exp_max_fuel;
+        }
+
+        while low + 1 < high {
+            let pivot = (low + high) / 2;
+            let ore_req = self.est_ore_for_fuel(pivot);
+
+            if ore_req <= TRILLION {
+                low = pivot;
+            }
+            else {
+                high = pivot;
+            }
+        }
+
+        low
     }
 }
 
@@ -114,25 +142,43 @@ mod tests {
     #[test]
     fn test_short_input() {
         let nf = Nanofactory::new(INPUT1);
-        assert_eq!(31, nf.est_ore_for_fuel());
+        assert_eq!(31, nf.est_ore_for_fuel(1));
     }
 
     #[test]
     fn test_longer_input() {
         let nf = Nanofactory::new(INPUT2);
-        assert_eq!(13312, nf.est_ore_for_fuel());
+        assert_eq!(13312, nf.est_ore_for_fuel(1));
     }
 
     #[test]
     fn test_medium_input() {
         let nf = Nanofactory::new(INPUT3);
-        assert_eq!(180697, nf.est_ore_for_fuel());
+        assert_eq!(180697, nf.est_ore_for_fuel(1));
     }
 
     #[test]
     fn test_longest_input() {
         let nf = Nanofactory::new(INPUT4);
-        assert_eq!(2210736, nf.est_ore_for_fuel());
+        assert_eq!(2210736, nf.est_ore_for_fuel(1));
+    }
+
+    #[test]
+    fn test_max_fuel_for_13312_ore() {
+        let nf = Nanofactory::new(INPUT2);
+        assert_eq!(82892753, nf.max_fuel_for_trillion_ore());
+    }
+
+    #[test]
+    fn test_max_fuel_for_180697_ore() {
+        let nf = Nanofactory::new(INPUT3);
+        assert_eq!(5586022, nf.max_fuel_for_trillion_ore());
+    }
+
+    #[test]
+    fn test_max_fuel_for_2210736_ore() {
+        let nf = Nanofactory::new(INPUT4);
+        assert_eq!(460664, nf.max_fuel_for_trillion_ore());
     }
 
 // 31
