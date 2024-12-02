@@ -12,7 +12,8 @@ impl Solver for Problem {
     }
 
     fn solution2(&self) -> Self::Ans2 {
-        0
+        let vec = read_into_vec(input::INPUT);
+        count_dampened_reports(&vec)
     }
 }
 
@@ -42,6 +43,28 @@ fn count_safe_reports(reports: &Vec<Vec<i64>>) -> usize {
         .count()
 }
 
+fn count_dampened_reports(reports: &Vec<Vec<i64>>) -> usize {
+    reports.iter()
+        .filter(|r| {
+            if is_report_safe(&r) {
+                return true;
+            }
+            is_dampened_safe(&r)
+        })
+        .count()
+}
+
+fn is_dampened_safe(report: &Vec<i64>) -> bool {
+    for index in 0..report.len() {
+        let mut cloned = report.clone();
+        cloned.remove(index);
+        if is_report_safe(&cloned) {
+            return true;
+        }
+    }
+    return false
+}
+
 #[cfg(test)]
 mod tests {
     use crate::solutions::day02::*;
@@ -50,6 +73,12 @@ mod tests {
     fn test_day_02_safe_reports_count() {
         let input = read_into_vec(TEST_INPUT_1);
         assert_eq!(2, count_safe_reports(&input));
+    }
+
+    #[test]
+    fn test_day_02_problem_dampener() {
+        let input = read_into_vec(TEST_INPUT_1);
+        assert_eq!(4 , count_dampened_reports(&input));
     }
 
 const TEST_INPUT_1: &str = "7 6 4 2 1
