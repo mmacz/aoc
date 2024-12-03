@@ -19,9 +19,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build
-      run: cargo build --release
+      run: cargo build --release --bin aoc2019
     - name: Run tests
-      run: cargo test --release
+      run: cargo test --release --bin aoc2019
     - name: Run apps
-      run: cargo run --release
+      run: cargo run --release --bin aoc2019
 
