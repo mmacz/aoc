@@ -18,7 +18,8 @@ impl Solver for Problem {
 }
 
 fn read_into_vec(input: &str) -> Vec<Vec<i64>> {
-    input.lines()
+    input
+        .lines()
         .map(|line| {
             line.split_whitespace()
                 .map(|l| l.parse::<i64>().unwrap())
@@ -38,13 +39,12 @@ fn is_report_safe(report: &Vec<i64>) -> bool {
 }
 
 fn count_safe_reports(reports: &Vec<Vec<i64>>) -> usize {
-    reports.iter()
-        .filter(|r| is_report_safe(&r))
-        .count()
+    reports.iter().filter(|r| is_report_safe(&r)).count()
 }
 
 fn count_dampened_reports(reports: &Vec<Vec<i64>>) -> usize {
-    reports.iter()
+    reports
+        .iter()
         .filter(|r| {
             if is_report_safe(&r) {
                 return true;
@@ -62,7 +62,7 @@ fn is_dampened_safe(report: &Vec<i64>) -> bool {
             return true;
         }
     }
-    return false
+    return false;
 }
 
 #[cfg(test)]
@@ -78,14 +78,13 @@ mod tests {
     #[test]
     fn test_day_02_problem_dampener() {
         let input = read_into_vec(TEST_INPUT_1);
-        assert_eq!(4 , count_dampened_reports(&input));
+        assert_eq!(4, count_dampened_reports(&input));
     }
 
-const TEST_INPUT_1: &str = "7 6 4 2 1
+    const TEST_INPUT_1: &str = "7 6 4 2 1
 1 2 7 8 9
 9 7 6 2 1
 1 3 2 4 5
 8 6 4 4 1
 1 3 6 7 9";
 }
-

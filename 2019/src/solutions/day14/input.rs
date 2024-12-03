@@ -59,4 +59,3 @@ pub const INPUT: &str = "
 1 XSRWM => 3 WMCD
 12 BZFH, 14 SKBV, 1 CTRH => 4 XFNPT
 7 ZKCXK => 6 VHFCR";
-

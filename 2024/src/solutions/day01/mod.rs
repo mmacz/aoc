@@ -17,8 +17,9 @@ impl Solver for Problem {
     }
 }
 
-fn read_to_vec(input: &str) -> Vec<(i64,i64)> {
-    input.lines()
+fn read_to_vec(input: &str) -> Vec<(i64, i64)> {
+    input
+        .lines()
         .map(|line| {
             let mut iter = line.split_whitespace();
             let l: i64 = iter.next().unwrap().parse::<i64>().unwrap();
@@ -29,10 +30,7 @@ fn read_to_vec(input: &str) -> Vec<(i64,i64)> {
 }
 
 fn split_into_vectors(input: &Vec<(i64, i64)>) -> (Vec<i64>, Vec<i64>) {
-    input
-        .into_iter()
-        .map(|(l, r)| (l, r))
-        .collect()
+    input.into_iter().map(|(l, r)| (l, r)).collect()
 }
 
 fn total_distance(input: &Vec<(i64, i64)>) -> i64 {
@@ -40,25 +38,18 @@ fn total_distance(input: &Vec<(i64, i64)>) -> i64 {
     left.sort();
     right.sort();
 
-    left.iter()
-        .zip(right)
-        .map(|(l, r)| (l - r).abs())
-        .sum()
+    left.iter().zip(right).map(|(l, r)| (l - r).abs()).sum()
 }
 
 fn total_similarity_score(input: &Vec<(i64, i64)>) -> i64 {
     let (left, right): (Vec<i64>, Vec<i64>) = split_into_vectors(input);
 
-    let occurences: Vec<i64> = left.iter()
-        .map(|l| {
-            right.iter().filter(|r| *r == l).count() as i64
-        })
+    let occurences: Vec<i64> = left
+        .iter()
+        .map(|l| right.iter().filter(|r| *r == l).count() as i64)
         .collect();
 
-    left.iter()
-        .zip(occurences)
-        .map(|(l, o)| l * o)
-        .sum()
+    left.iter().zip(occurences).map(|(l, o)| l * o).sum()
 }
 
 #[cfg(test)]
@@ -77,11 +68,10 @@ mod tests {
         assert_eq!(31, total_similarity_score(&locations));
     }
 
-const TEST_INPUT_1: &str = "3   4
+    const TEST_INPUT_1: &str = "3   4
 4   3
 2   5
 1   3
 3   9
 3   3";
 }
-

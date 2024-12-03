@@ -1,6 +1,6 @@
-use std::string::String;
 use std::collections::HashMap;
 use std::fmt;
+use std::string::String;
 
 use crate::solver::Solver;
 mod input;
@@ -8,14 +8,17 @@ mod input;
 #[derive(Eq, PartialEq, Hash, Clone, Debug)]
 struct Ingredient {
     qty: isize,
-    name: String
+    name: String,
 }
 impl Ingredient {
     fn new(ing_str: &str) -> Ingredient {
         let mut ing_iter = ing_str.trim().split(" ");
         let qty: isize = ing_iter.next().unwrap().parse::<isize>().unwrap();
         let name = ing_iter.next().unwrap();
-        Ingredient { qty: qty, name: name.to_string() }
+        Ingredient {
+            qty: qty,
+            name: name.to_string(),
+        }
     }
 }
 type Ingredients = Vec<Ingredient>;
@@ -39,11 +42,13 @@ impl Solver for Problem {
 }
 
 struct Nanofactory {
-    reacts: Reactions
+    reacts: Reactions,
 }
 impl Nanofactory {
     fn new(reactions: &str) -> Nanofactory {
-        Nanofactory { reacts: parse_reactions(reactions) }
+        Nanofactory {
+            reacts: parse_reactions(reactions),
+        }
     }
 
     fn est_ore_for_fuel(&self, n: isize) -> isize {
@@ -52,19 +57,29 @@ impl Nanofactory {
         while let Some(&_cnt) = reqs
             .iter()
             .find(|(&ref name, &cnt)| name != "ORE" && cnt > 0)
-            .map(|(_, cnt)| cnt) {
-                let ing = reqs.iter().find(|(&ref name, &cnt)| name != "ORE" && cnt > 0).map(|(name, _)| name.clone()).unwrap();
-                let prod = self.reacts.iter().find(|(prod, _)| prod.name == ing).map(|(prod, _)| prod.clone()).unwrap();
+            .map(|(_, cnt)| cnt)
+        {
+            let ing = reqs
+                .iter()
+                .find(|(&ref name, &cnt)| name != "ORE" && cnt > 0)
+                .map(|(name, _)| name.clone())
+                .unwrap();
+            let prod = self
+                .reacts
+                .iter()
+                .find(|(prod, _)| prod.name == ing)
+                .map(|(prod, _)| prod.clone())
+                .unwrap();
 
-                let needed = reqs[&ing];
-                let qty = (needed as f64 / prod.qty as f64).ceil() as isize;
+            let needed = reqs[&ing];
+            let qty = (needed as f64 / prod.qty as f64).ceil() as isize;
 
-                *reqs.get_mut(&ing).unwrap() -= qty * prod.qty;
+            *reqs.get_mut(&ing).unwrap() -= qty * prod.qty;
 
-                for ing in self.reacts.get(&prod).unwrap() {
-                    *reqs.entry(ing.name.clone()).or_insert(0) += qty * ing.qty;
-                }
+            for ing in self.reacts.get(&prod).unwrap() {
+                *reqs.entry(ing.name.clone()).or_insert(0) += qty * ing.qty;
             }
+        }
         *reqs.get("ORE").unwrap_or(&0) as isize
     }
 
@@ -86,8 +101,7 @@ impl Nanofactory {
 
             if ore_req <= TRILLION {
                 low = pivot;
-            }
-            else {
+            } else {
                 high = pivot;
             }
         }
@@ -125,11 +139,11 @@ fn parse_reactions(reactions: &str) -> Reactions {
             let ingredients: Ingredients = ingredients_str
                 .split(",")
                 .into_iter()
-                .map(|ing| {
-                    Ingredient::new(ing.trim())
-                })
+                .map(|ing| Ingredient::new(ing.trim()))
                 .collect();
-            reacts.entry(Ingredient::new(product)).or_insert(ingredients);
+            reacts
+                .entry(Ingredient::new(product))
+                .or_insert(ingredients);
         })
         .collect();
     reacts
@@ -181,8 +195,8 @@ mod tests {
         assert_eq!(460664, nf.max_fuel_for_trillion_ore());
     }
 
-// 31
-const INPUT1: &str = "
+    // 31
+    const INPUT1: &str = "
 10 ORE => 10 A
 1 ORE => 1 B
 7 A, 1 B => 1 C
@@ -190,8 +204,8 @@ const INPUT1: &str = "
 7 A, 1 D => 1 E
 7 A, 1 E => 1 FUEL";
 
-// 13312 ORE for 1 FUEL
-const INPUT2: &str = "
+    // 13312 ORE for 1 FUEL
+    const INPUT2: &str = "
 157 ORE => 5 NZVS
 165 ORE => 6 DCFZ
 44 XJWVT, 5 KHKGT, 1 QDVJ, 29 NZVS, 9 GPVTF, 48 HKGWZ => 1 FUEL
@@ -202,8 +216,8 @@ const INPUT2: &str = "
 165 ORE => 2 GPVTF
 3 DCFZ, 7 NZVS, 5 HKGWZ, 10 PSHF => 8 KHKGT";
 
-// 180697 ORE for 1 FUEL
-const INPUT3: &str = "
+    // 180697 ORE for 1 FUEL
+    const INPUT3: &str = "
 2 VPVL, 7 FWMGM, 2 CXFTF, 11 MNCFX => 1 STKFG
 17 NVRVD, 3 JNWZP => 8 VPVL
 53 STKFG, 6 MNCFX, 46 VJHF, 81 HVMC, 68 CXFTF, 25 GNMV => 1 FUEL
@@ -217,8 +231,8 @@ const INPUT3: &str = "
 1 VJHF, 6 MNCFX => 4 RFSQX
 176 ORE => 6 VJHF";
 
-// 2210736 ORE for 1 FUEL
-const INPUT4: &str = "
+    // 2210736 ORE for 1 FUEL
+    const INPUT4: &str = "
 171 ORE => 8 CNZTR
 7 ZLQW, 3 BMBT, 9 XCVML, 26 XMNCP, 1 WPTQ, 2 MZWV, 1 RJRHP => 4 PLWSL
 114 ORE => 4 BHXH
@@ -237,4 +251,3 @@ const INPUT4: &str = "
 7 XCVML => 6 RJRHP
 5 BHXH, 4 VRPVC => 5 LTCX";
 }
-

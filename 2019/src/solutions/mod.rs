@@ -1,5 +1,5 @@
-use std::time::{SystemTime, UNIX_EPOCH};
 use crate::solver::Solver;
+use std::time::{SystemTime, UNIX_EPOCH};
 mod day01;
 mod day02;
 mod day03;
