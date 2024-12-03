@@ -3,8 +3,12 @@ name: Advent of Code 2024 in Rust
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - "2024/**"
   pull_request:
     branches: [ "main" ]
+    paths:
+      - "2024/**"
 
 env:
   CARGO_TERM_COLOR: always

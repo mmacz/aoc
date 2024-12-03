@@ -1,4 +1,4 @@
-![Build status](https://github.com/mmacz/aoc2024/actions/workflows/aoc2024.yml/badge.svg)
+![Build status](https://github.com/mmacz/aoc/actions/workflows/aoc2024.yml/badge.svg)
 
 # Advent of Code 2024
 

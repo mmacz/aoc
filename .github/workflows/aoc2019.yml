@@ -3,8 +3,12 @@ name: Advent of Code 2019 in Rust
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - "2019/**"
   pull_request:
     branches: [ "main" ]
+    paths:
+      - "2019/**"
 
 env:
   CARGO_TERM_COLOR: always
