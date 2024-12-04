@@ -19,9 +19,7 @@ impl Solver for Problem {
 }
 
 fn parse_input(input: &str) -> Vec<Vec<char>> {
-    input.lines()
-        .map(|line| line.chars().collect())
-        .collect()
+    input.lines().map(|line| line.chars().collect()).collect()
 }
 
 fn count_xmas_in_input(input: &Vec<Vec<char>>) -> usize {
@@ -32,24 +30,23 @@ fn count_xmas_in_input(input: &Vec<Vec<char>>) -> usize {
                 [(x, y), (x + 1, y - 1), (x + 2, y - 2), (x + 3, y - 3)],
                 [(x, y), (x + 1, y), (x + 2, y), (x + 3, y)],
                 [(x, y), (x + 1, y + 1), (x + 2, y + 2), (x + 3, y + 3)],
-                [(x, y), (x, y + 1), (x, y + 2), (x, y + 3)]
+                [(x, y), (x, y + 1), (x, y + 2), (x, y + 3)],
             ]
         })
         .filter(|coords| {
-            let mut i = coords
-                .iter()
-                .map(|(x,y)| {
-                    input.get(*y as usize)
-                        .and_then(|r| r.get(*x as usize).copied())
-                        .unwrap_or_default()
-                });
-                let mut letters: [char; 4] = [' '; 4];
-                letters.fill_with(|| i.next().unwrap_or_default());
-                let text = String::from_iter(letters);
-                match text.as_str() {
-                    "XMAS" | "SAMX" => true,
-                    _ => false
-                }
+            let mut i = coords.iter().map(|(x, y)| {
+                input
+                    .get(*y as usize)
+                    .and_then(|r| r.get(*x as usize).copied())
+                    .unwrap_or_default()
+            });
+            let mut letters: [char; 4] = [' '; 4];
+            letters.fill_with(|| i.next().unwrap_or_default());
+            let text = String::from_iter(letters);
+            match text.as_str() {
+                "XMAS" | "SAMX" => true,
+                _ => false,
+            }
         })
         .count()
 }
@@ -63,12 +60,15 @@ fn count_cross_in_input(input: &Vec<Vec<char>>) -> usize {
                 (x, y),
                 (x, y + 2),
                 (x + 2, y),
-                (x + 2, y + 2)
+                (x + 2, y + 2),
             ]
         })
         .filter(|coords| {
             let mut i = coords.iter().map(|(x, y)| {
-                input.get(*y as usize).and_then(|row| row.get(*x as usize).copied()).unwrap_or_default()
+                input
+                    .get(*y as usize)
+                    .and_then(|row| row.get(*x as usize).copied())
+                    .unwrap_or_default()
             });
 
             if i.next().is_none_or(|n| n != 'A') {
@@ -84,7 +84,7 @@ fn count_cross_in_input(input: &Vec<Vec<char>>) -> usize {
             let text = String::from_iter(letters);
             match text.as_str() {
                 "MMSS" | "MSMS" | "SSMM" | "SMSM" => true,
-                _ => false
+                _ => false,
             }
         })
         .count()
@@ -106,7 +106,7 @@ mod tests {
         assert_eq!(9, count_cross_in_input(&v));
     }
 
-const TEST_INPUT_1: &str = "MMMSXXMASM
+    const TEST_INPUT_1: &str = "MMMSXXMASM
 MSAMXMSMSA
 AMXSXMAAMM
 MSAMASMSMX
@@ -117,4 +117,3 @@ SAXAMASAAA
 MAMMMXMMMM
 MXMXAXMASX";
 }
-
