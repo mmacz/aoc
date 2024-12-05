@@ -4,22 +4,26 @@ pub struct Problem;
 
 use std::collections::HashMap;
 
+enum UpdatesType { VALID, FIXED }
+
 impl Solver for Problem {
     type Ans1 = usize;
     type Ans2 = usize;
 
     fn solution1(&self) -> Self::Ans1 {
         let v = split_page_ordering_and_updates(input::INPUT);
-        let valid = get_valid_updates(&v);
+        let valid = get_updates_and_rules(&v, UpdatesType::VALID);
         sum_middle_elements(&valid)
     }
 
     fn solution2(&self) -> Self::Ans2 {
-        0
+        let v = split_page_ordering_and_updates(input::INPUT);
+        let fixed = get_updates_and_rules(&v, UpdatesType::FIXED);
+        sum_middle_elements(&fixed)
     }
 }
 
-fn get_valid_updates(input: &Vec<&str>) -> Vec<Vec<usize>> {
+fn get_updates_and_rules(input: &Vec<&str>, update_type: UpdatesType) -> Vec<Vec<usize>> {
     let mut rules: HashMap<usize, Vec<usize>> = HashMap::new();
     input[0].lines()
         .for_each(|line| {
@@ -29,22 +33,47 @@ fn get_valid_updates(input: &Vec<&str>) -> Vec<Vec<usize>> {
             rules.entry(k).or_insert_with(Vec::new).push(v);
         });
 
-    input[1].lines()
+    let updates = input[1].lines()
         .filter_map(|line| {
             line.split(',')
                 .map(|num| num.trim().parse::<usize>())
                 .collect::<Result<Vec<_>, _>>()
                 .ok()
-        })
-        .filter(|v| {
+        });
+    let (valid, mut invalid): (Vec<Vec<usize>>, Vec<Vec<usize>>) = updates.into_iter()
+        .partition(|v| {
             v.windows(2).all(|window| {
                 let first = window[0];
                 let second = window[1];
                 rules.get(&first)
                     .map_or(false, |values| values.contains(&second))
             })
-        })
-        .collect()
+        });
+
+    match update_type {
+        UpdatesType::VALID => valid,
+        UpdatesType::FIXED => {
+            invalid.iter()
+                .map(|update| {
+                    let mut ordered = false;
+                    let mut u = update.clone();
+                    while !ordered {
+                        ordered = true;
+                        for i in 0..u.len() -1 {
+                            let first = u[i];
+                            let second = u[i + 1];
+                            if !rules.get(&first).map_or(false, |values| values.contains(&second)) {
+                                u.swap(i, i + 1);
+                                ordered = false;
+                                break;
+                            }
+                        }
+                    }
+                    u
+                })
+                .collect()
+        }
+    }
 }
 
 fn sum_middle_elements(updates: &Vec<Vec<usize>>) -> usize {
@@ -64,10 +93,17 @@ mod test {
     use crate::solutions::day05::*;
 
     #[test]
-    fn test_day_05_sum_ordering_rules() {
+    fn test_day_05_sum_middles_of_valid_updates() {
         let v = split_page_ordering_and_updates(TEST_INPUT_1);
-        let valid = get_valid_updates(&v);
+        let valid = get_updates_and_rules(&v, UpdatesType::VALID);
         assert_eq!(143, sum_middle_elements(&valid));
+    }
+
+    #[test]
+    fn test_day_05_sum_middles_of_invalid_updates() {
+        let v = split_page_ordering_and_updates(TEST_INPUT_1);
+        let invalid = get_updates_and_rules(&v, UpdatesType::FIXED);
+        assert_eq!(123, sum_middle_elements(&invalid));
     }
 
 const TEST_INPUT_1: &str = "47|53
