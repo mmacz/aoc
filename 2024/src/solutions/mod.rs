@@ -4,6 +4,7 @@ mod day01;
 mod day02;
 mod day03;
 mod day04;
+mod day05;
 
 pub fn run_solutions() {
     let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
@@ -11,6 +12,7 @@ pub fn run_solutions() {
     day02::Problem {}.solve(2);
     day03::Problem {}.solve(3);
     day04::Problem {}.solve(4);
+    day05::Problem {}.solve(5);
     let end = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
 
     println!(" ******** AOC solutions time: {:#?} ******** ", end - start);
