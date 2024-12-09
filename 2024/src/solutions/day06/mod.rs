@@ -126,7 +126,7 @@ fn get_guard(input: &str) -> Guard {
                     x = xx;
                     y = yy;
                     break;
-                },
+                }
                 _ => {}
             }
         }
@@ -156,4 +156,3 @@ mod test {
 #.........
 ......#...";
 }
-
