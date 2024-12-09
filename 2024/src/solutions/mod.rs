@@ -16,7 +16,7 @@ pub fn run_solutions() {
     day04::Problem {}.solve(4);
     day05::Problem {}.solve(5);
     day06::Problem {}.solve(6);
-    day06::Problem {}.solve(7);
+    day07::Problem {}.solve(7);
     let end = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
 
     println!(" ******** AOC solutions time: {:#?} ******** ", end - start);
