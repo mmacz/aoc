@@ -1,4 +1,3 @@
-mod input;
 use crate::solver::Solver;
 
 pub struct Problem;
@@ -7,13 +6,13 @@ impl Solver for Problem {
     type Ans1 = usize;
     type Ans2 = usize;
 
-    fn solution1(&self) -> Self::Ans1 {
-        let v: Vec<Vec<char>> = parse_input(input::INPUT);
+    fn solution1(&self, input: &str) -> Self::Ans1 {
+        let v: Vec<Vec<char>> = parse_input(input);
         count_xmas_in_input(&v)
     }
 
-    fn solution2(&self) -> Self::Ans2 {
-        let v: Vec<Vec<char>> = parse_input(input::INPUT);
+    fn solution2(&self, input: &str) -> Self::Ans2 {
+        let v: Vec<Vec<char>> = parse_input(input);
         count_cross_in_input(&v)
     }
 }

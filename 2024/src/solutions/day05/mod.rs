@@ -1,4 +1,3 @@
-mod input;
 use crate::solver::Solver;
 pub struct Problem;
 
@@ -13,14 +12,14 @@ impl Solver for Problem {
     type Ans1 = usize;
     type Ans2 = usize;
 
-    fn solution1(&self) -> Self::Ans1 {
-        let v = split_page_ordering_and_updates(input::INPUT);
+    fn solution1(&self, input: &str) -> Self::Ans1 {
+        let v = split_page_ordering_and_updates(input);
         let valid = get_updates_and_rules(&v, UpdatesType::VALID);
         sum_middle_elements(&valid)
     }
 
-    fn solution2(&self) -> Self::Ans2 {
-        let v = split_page_ordering_and_updates(input::INPUT);
+    fn solution2(&self, input: &str) -> Self::Ans2 {
+        let v = split_page_ordering_and_updates(input);
         let fixed = get_updates_and_rules(&v, UpdatesType::FIXED);
         sum_middle_elements(&fixed)
     }

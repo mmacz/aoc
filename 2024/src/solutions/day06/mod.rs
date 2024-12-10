@@ -1,4 +1,3 @@
-mod input;
 use crate::solver::Solver;
 pub struct Problem;
 
@@ -8,14 +7,14 @@ impl Solver for Problem {
     type Ans1 = usize;
     type Ans2 = usize;
 
-    fn solution1(&self) -> Self::Ans1 {
-        let mut guard = get_guard(input::INPUT);
+    fn solution1(&self, input: &str) -> Self::Ans1 {
+        let mut guard = get_guard(input);
         guard.patrol();
         route_to_unique(&guard.route).len()
     }
 
-    fn solution2(&self) -> Self::Ans2 {
-        let mut guard = get_guard(input::INPUT);
+    fn solution2(&self, input: &str) -> Self::Ans2 {
+        let mut guard = get_guard(input);
         let blocking = guard.check_for_obstructions_blocks_routes();
         blocking.len()
     }

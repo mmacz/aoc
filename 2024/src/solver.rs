@@ -5,13 +5,13 @@ pub trait Solver {
     type Ans1: Display;
     type Ans2: Display;
 
-    fn solution1(&self) -> Self::Ans1;
-    fn solution2(&self) -> Self::Ans2;
+    fn solution1(&self, input: &str) -> Self::Ans1;
+    fn solution2(&self, input: &str) -> Self::Ans2;
 
-    fn solve(&self, day: u32) {
+    fn solve(&self, day: u32, input: &str) {
         let start = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
-        let a1 = self.solution1();
-        let a2 = self.solution2();
+        let a1 = self.solution1(input);
+        let a2 = self.solution2(input);
         let end = SystemTime::now().duration_since(UNIX_EPOCH).unwrap();
         println!(">>>>>> ======= Day {:2} ======= <<<<<<", day);
         println!("Answer 1: {}", a1);

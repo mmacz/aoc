@@ -1,4 +1,3 @@
-mod input;
 use crate::solver::Solver;
 pub struct Problem;
 
@@ -8,13 +7,13 @@ impl Solver for Problem {
     type Ans1 = i64;
     type Ans2 = i64;
 
-    fn solution1(&self) -> Self::Ans1 {
-        let v = find_mul_pairs(input::INPUT);
+    fn solution1(&self, input: &str) -> Self::Ans1 {
+        let v = find_mul_pairs(input);
         sum_pairs_mult(&v)
     }
 
-    fn solution2(&self) -> Self::Ans2 {
-        let v = find_enabled_mul_pairs(input::INPUT);
+    fn solution2(&self, input: &str) -> Self::Ans2 {
+        let v = find_enabled_mul_pairs(input);
         sum_pairs_mult(&v)
     }
 }

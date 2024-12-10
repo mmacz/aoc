@@ -1,4 +1,3 @@
-mod input;
 use crate::solver::Solver;
 pub struct Problem;
 
@@ -6,14 +5,14 @@ impl Solver for Problem {
     type Ans1 = u64;
     type Ans2 = u64;
 
-    fn solution1(&self) -> Self::Ans1 {
+    fn solution1(&self, input: &str) -> Self::Ans1 {
         let with_concat = false;
-        solve(input::INPUT, with_concat)
+        solve(input, with_concat)
     }
 
-    fn solution2(&self) -> Self::Ans2 {
+    fn solution2(&self, input: &str) -> Self::Ans2 {
         let with_concat = true;
-        solve(input::INPUT, with_concat)
+        solve(input, with_concat)
     }
 }
 

@@ -1,4 +1,3 @@
-mod input;
 use crate::solver::Solver;
 pub struct Problem;
 
@@ -6,13 +5,13 @@ impl Solver for Problem {
     type Ans1 = i64;
     type Ans2 = i64;
 
-    fn solution1(&self) -> Self::Ans1 {
-        let vec = read_to_vec(input::INPUT);
+    fn solution1(&self, input: &str) -> Self::Ans1 {
+        let vec = read_to_vec(input);
         total_distance(&vec)
     }
 
-    fn solution2(&self) -> Self::Ans2 {
-        let vec = read_to_vec(input::INPUT);
+    fn solution2(&self, input: &str) -> Self::Ans2 {
+        let vec = read_to_vec(input);
         total_similarity_score(&vec)
     }
 }
