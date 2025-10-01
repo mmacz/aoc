@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 
 use crate::solver::Solver;
+
 pub struct Problem;
 
 type Grid = Vec<Vec<char>>;
@@ -15,22 +16,22 @@ impl Solver for Problem {
     type Ans2 = usize;
 
     fn solution1(&self, input: &str) -> Self::Ans1 {
-        let grid : Grid = read_into_grid(input);
+        let grid: Grid = read_into_grid(input);
         let antennas = get_antennas(&grid);
         let antinodes = get_antinodes(&antennas, &grid);
         antinodes.len()
     }
 
     fn solution2(&self, input: &str) -> Self::Ans1 {
-        0
+        let grid: Grid = read_into_grid(input);
+        let antennas = get_antennas(&grid);
+        let antinodes = get_resonant_antinodes(&antennas, &grid);
+        antinodes.len()
     }
 }
 
 fn read_into_grid(input: &str) -> Grid {
-    input
-        .lines()
-        .map(|line| line.chars().collect())
-        .collect()
+    input.lines().map(|line| line.chars().collect()).collect()
 }
 
 fn get_antennas(grid: &Grid) -> Antennas {
@@ -39,14 +40,16 @@ fn get_antennas(grid: &Grid) -> Antennas {
     for (y, row) in grid.iter().enumerate() {
         for (x, &cell) in row.iter().enumerate() {
             if cell.is_ascii_alphanumeric() {
-                antennas.entry(cell).or_insert_with(Vec::new).push((x as i32, y as i32));
+                antennas
+                    .entry(cell)
+                    .or_insert_with(Vec::new)
+                    .push((x as i32, y as i32));
             }
         }
     }
 
     antennas
 }
-
 
 fn get_antinodes(antennas: &Antennas, grid: &Grid) -> Antinodes {
     let mut antinodes: Antinodes = HashSet::new();
@@ -63,13 +66,69 @@ fn get_antinodes(antennas: &Antennas, grid: &Grid) -> Antinodes {
                 let antinode1 = (x1 - dx, y1 - dy);
                 let antinode2 = (x2 + dx, y2 + dy);
 
-                if antinode1.0 >= 0 && antinode1.0 < grid[0].len() as i32 &&
-                   antinode1.1 >= 0 && antinode1.1 < grid.len() as i32 {
+                if antinode1.0 >= 0
+                    && antinode1.0 < grid[0].len() as i32
+                    && antinode1.1 >= 0
+                    && antinode1.1 < grid.len() as i32
+                {
                     antinodes.insert(antinode1);
                 }
-                if antinode2.0 >= 0 && antinode2.0 < grid[0].len() as i32 &&
-                   antinode2.1 >= 0 && antinode2.1 < grid.len() as i32 {
+                if antinode2.0 >= 0
+                    && antinode2.0 < grid[0].len() as i32
+                    && antinode2.1 >= 0
+                    && antinode2.1 < grid.len() as i32
+                {
                     antinodes.insert(antinode2);
+                }
+            }
+        }
+    }
+
+    antinodes
+}
+
+fn gcd(mut a: i32, mut b: i32) -> i32 {
+    while b != 0 {
+        let t = b;
+        b = a % b;
+        a = t;
+    }
+    a.abs()
+}
+
+fn get_resonant_antinodes(antennas: &Antennas, grid: &Grid) -> Antinodes {
+    let mut antinodes: Antinodes = HashSet::new();
+
+    for positions in antennas.values() {
+        for i in 0..positions.len() {
+            for j in (i + 1)..positions.len() {
+                let (x1, y1) = positions[i];
+                let (x2, y2) = positions[j];
+
+                let dx = x2 - x1;
+                let dy = y2 - y1;
+
+                let step_x = if dx == 0 { 0 } else { dx / gcd(dx, dy) };
+                let step_y = if dy == 0 { 0 } else { dy / gcd(dx, dy) };
+
+                let mut antinode = (x1, y1);
+                while antinode.0 >= 0
+                    && antinode.0 < grid[0].len() as i32
+                    && antinode.1 >= 0
+                    && antinode.1 < grid.len() as i32
+                {
+                    antinodes.insert(antinode);
+                    antinode = (antinode.0 - step_x, antinode.1 - step_y);
+                }
+
+                let mut antinode = (x2, y2);
+                while antinode.0 >= 0
+                    && antinode.0 < grid[0].len() as i32
+                    && antinode.1 >= 0
+                    && antinode.1 < grid.len() as i32
+                {
+                    antinodes.insert(antinode);
+                    antinode = (antinode.0 + step_x, antinode.1 + step_y);
                 }
             }
         }
@@ -83,11 +142,27 @@ mod test {
     use crate::solutions::day08::*;
 
     #[test]
-    fn test_day_08_antinode_locations_count() {
-        let grid : Grid = read_into_grid(TEST_INPUT_1);
+    fn test_day_08_antinode_locations_count_part_1() {
+        let grid: Grid = read_into_grid(TEST_INPUT_1);
         let antennas = get_antennas(&grid);
         let antinodes = get_antinodes(&antennas, &grid);
         assert_eq!(antinodes.len(), 14);
+    }
+
+    #[test]
+    fn test_day_08_antinode_locations_count_part_2_input_1() {
+        let grid: Grid = read_into_grid(TEST_INPUT_1);
+        let antennas = get_antennas(&grid);
+        let antinodes = get_resonant_antinodes(&antennas, &grid);
+        assert_eq!(antinodes.len(), 34);
+    }
+
+    #[test]
+    fn test_day_08_antinode_locations_count_part_2_input_2() {
+        let grid: Grid = read_into_grid(TEST_INPUT_2);
+        let antennas = get_antennas(&grid);
+        let antinodes = get_resonant_antinodes(&antennas, &grid);
+        assert_eq!(antinodes.len(), 9);
     }
 
     const TEST_INPUT_1: &str =
@@ -103,5 +178,16 @@ mod test {
 .........A..
 ............
 ............";
-}
 
+    const TEST_INPUT_2: &str =
+"T.........
+...T......
+.T........
+..........
+..........
+..........
+..........
+..........
+..........
+..........";
+}
