@@ -13,7 +13,7 @@ Each year is organized into its own directory. For example:
 - `2024/`
 - etc.
 
-Within each year, you'll find one directory per day, typically named `dayXX`, containing the source code and input files for that day's puzzle. Inputs are not provided becaise of legal reasons.
+Within each year, you'll find one directory per day, typically named `dayXX`, containing the source code and input files for that day's puzzle. Inputs are not provided because of legal reasons.
 
 ## 🚀 Running Solutions
 
