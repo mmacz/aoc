@@ -4,7 +4,7 @@
 \
 ![Build status](https://github.com/mmacz/aoc/actions/workflows/aoc2019.yml/badge.svg)
 
-This repository contains my solutions for the [Advent of Code](https://adventofcode.com/) programming puzzles, implemented in Rust/C++.
+This repository contains my solutions for the [Advent of Code](https://adventofcode.com/) programming puzzles, implemented in Rust.
 
 ## 📁 Repository Structure
 
