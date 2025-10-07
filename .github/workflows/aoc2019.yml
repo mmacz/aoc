@@ -4,11 +4,11 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - "Rust/2019/**"
+      - "2019/**"
   pull_request:
     branches: [ "main" ]
     paths:
-      - "Rust/2019/**"
+      - "2019/**"
 
 env:
   CARGO_TERM_COLOR: always
@@ -20,8 +20,6 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build
       run: cargo build --release --bin aoc2019
-      working-directory: Rust
     - name: Run tests
       run: cargo test --release --bin aoc2019
-      working-directory: Rust
 
